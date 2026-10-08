@@ -2,7 +2,7 @@ import { Service } from '@angular/core';
 
 @Service()
 export class ToastService {
-    cunstructor() {
+    constructor() {
         this.createToastContainer();
     }
 
@@ -47,8 +47,7 @@ export class ToastService {
         this.createToastElement(message, 'alert-error', duration);
     }
 
-    warning
-    (message: string, duration?: number) {
+    warning(message: string, duration?: number) {
         this.createToastElement(message, 'alert-warning', duration);
     }
     
