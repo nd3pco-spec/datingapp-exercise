@@ -1,13 +1,42 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Service } from '@angular/core';
+import { inject, Service, signal } from '@angular/core';
+import { LoginCreds, RegisterCreds, User } from '../../types/user';
+import { pipe, tap } from 'rxjs';
 
 @Service()
 export class AccountService {
-    private http = inject(HttpClient);
-    
-    baseUrl = 'https://localhost:5001/api/';
+  private http = inject(HttpClient);
+  currentUser = signal<User | null>(null);
 
-    login(creds: any) {
-        return this.http.post(this.baseUrl + 'account/login', creds);
-    }
+  baseUrl = 'https://localhost:5001/api/';
+
+  register(creds: RegisterCreds) {
+    return this.http.post<User>(this.baseUrl + 'account/register', creds).pipe(
+      tap((user) => {
+        if (user) {
+          this.setCurrentUser(user);
+        }
+      }),
+    );
+  }
+
+  login(creds: LoginCreds) {
+    return this.http.post<User>(this.baseUrl + 'account/login', creds).pipe(
+      tap((user) => {
+        if (user) {
+          this.setCurrentUser(user);
+        }
+      }),
+    );
+  }
+
+  setCurrentUser(user: User) {
+    localStorage.setItem('user', JSON.stringify(user));
+    this.currentUser.set(user);
+  }
+
+  logout() {
+    localStorage.removeItem('user');
+    this.currentUser.set(null);
+  }
 }
