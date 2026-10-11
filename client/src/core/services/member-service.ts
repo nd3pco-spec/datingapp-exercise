@@ -1,28 +1,22 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { inject, Service } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { Member } from '../../types/member';
-import { AccountService } from './account-service';
+import { Member, Photo } from '../../types/member';
 
 @Service()
 export class MemberService {
     private http = inject(HttpClient);
-    private accountService = inject(AccountService);
     private baseUrl = environment.apiUrl;
 
     getMembers() {
-        return this.http.get<Member[]>(this.baseUrl + 'members', this.getHtpOptions());
+        return this.http.get<Member[]>(this.baseUrl + 'members');
     }
 
     getMember(id: string) {
-        return this.http.get<Member>(this.baseUrl + 'members/' + id, this.getHtpOptions());
+        return this.http.get<Member>(this.baseUrl + 'members/' + id);
     }
 
-    private getHtpOptions() {
-        return {
-            headers: new HttpHeaders({
-                Authorization: 'Bearer ' + this.accountService.currentUser()?.token
-            })
-        }
+    getMemberPhotos(id: string) {
+        return this.http.get<Photo[]>(this.baseUrl + 'members/' + id + '/photos');
     }
 }
