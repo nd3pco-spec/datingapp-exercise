@@ -28,7 +28,7 @@ export class MemberProfile implements OnInit, OnDestroy {
     city: '',
     country: ''
   };
-  
+
   ngOnInit(): void {
     this.editableMember = {
       displayName: this.memberService.member()?.displayName || '',
@@ -37,16 +37,15 @@ export class MemberProfile implements OnInit, OnDestroy {
       country: this.memberService.member()?.country || '',
     }
   }
-  
+
   updateProfile() {
     if (!this.memberService.member()) return;
-    const updatedMember = {...this.memberService.member(), ...this.editableMember};
+    const updatedMember = { ...this.memberService.member(), ...this.editableMember };
     this.memberService.updateMember(this.editableMember).subscribe({
       next: () => {
         const currentUser = this.accountService.currentUser();
         if (currentUser && updatedMember.displayName !== currentUser.displayName) {
-          currentUser.displayName = updatedMember.displayName;
-          this.accountService.setCurrentUser(currentUser);
+          this.accountService.setCurrentUser({ ...currentUser, displayName: updatedMember.displayName });
         }
         this.toast.success("Profile updated successfully");
         this.memberService.editMode.set(false);
